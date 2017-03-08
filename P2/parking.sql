@@ -34,3 +34,7 @@ VALUES (25 , '1234ASL', 'White', 'Honda', strftime('%s','now'));
 
 INSERT INTO PK (PLACE,NP,COLOR,BRAND, DATA) 
 VALUES (22 , '1234ASB', 'Blue', 'Honda', strftime('%s','now'));
+
+
+/*RETORNA SEGONS*/
+select strftime('%s','now')-DATA from PK where PLACE = '0';
