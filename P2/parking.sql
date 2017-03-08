@@ -38,3 +38,6 @@ VALUES (22 , '1234ASB', 'Blue', 'Honda', strftime('%s','now'));
 
 /*RETORNA SEGONS*/
 select strftime('%s','now')-DATA from PK where PLACE = '0';
+
+/*Retorna els dies*/
+select (strftime('%s','now')-DATA)/3600/24 from PK where PLACE = '0';
