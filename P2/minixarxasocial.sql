@@ -12,6 +12,7 @@ CREATE TABLE AMISTATS(
   email2 varchar(32),
   estat varchar(10),
   PRIMARY KEY (email1, email2)
+  foreign key (email1, email2) REFERENCES USUARIS
 );
 
 INSERT INTO USUARIS VALUES ('peregarcia@upc.edu', 'Pere', 'Garcia', 'Manresa', '2017-01-01', '2017');
