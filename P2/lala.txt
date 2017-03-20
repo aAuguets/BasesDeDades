@@ -1,0 +1,48 @@
+ID_EMPLEAT  CIUTAT    
+----------  ----------
+1           Madrid    
+4           Manresa   
+ID_EMPLEAT  CIUTAT    
+----------  ----------
+4           Manresa   
+ID_EMPLEAT
+----------
+2         
+3         
+5         
+6         
+7         
+8         
+22        
+ID_EMPLEAT
+----------
+2         
+3         
+ID_EMPRESA  NUM_EMPLEATS
+----------  ------------
+B           4           
+ID_EMPLEAT  CARRER      CIUTAT    
+----------  ----------  ----------
+1           Pio         Madrid    
+2           As          Murcia    
+3           Z           Manresa   
+4           Barcelona   Manresa   
+5           A           Barcelona 
+6           B           Manresa   
+7           C           Mataro    
+8           E           Barcelona 
+22          F           Barcelona 
+ID_EMPLEAT  ID_EMPRESA   SALARI    
+----------  -----------  ----------
+1           Bank Newton  1000      
+2           A            2000      
+3           B            1650.0    
+4           Bank Newton  1210      
+5           A            750       
+6           B            750       
+7           B            750       
+8           C            750       
+22          B            750       
+ID_EMPLEAT
+----------
+2         

@@ -1,0 +1,7 @@
+select  ID_EMPLEAT , CIUTAT from  EMPLEAT  where ID_EMPLEAT in(select ID_EMPLEAT from FEINA  where ID_EMPRESA = "Bank Newton" ) ;
+select  ID_EMPLEAT , CIUTAT from  EMPLEAT  where ID_EMPLEAT in(select ID_EMPLEAT from FEINA  where ID_EMPRESA = "Bank Newton" and salari > 1000 );
+select ID_EMPLEAT from FEINA where ID_EMPRESA != 'Bank Newton';
+select  ID_EMPLEAT from  FEINA where  SALARI > (select max(SALARI)  from FEINA where ID_EMPRESA='Bank Newton');
+UPDATE EMPLEAT set CIUTAT='Barcelona' where ID_EMPLEAT=22;
+select * from feina,manager where ID_EMPLEAT_COORDINADOR=ID_EMPLEAT;  
+select ID_EMPRESA from feina where max( COUNT (ID_EMPLEAT) );
