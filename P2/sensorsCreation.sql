@@ -60,7 +60,11 @@ select avg(light) from sensors where nodeid=1 and time(result_time) between "11:
 select avg(light), avg(temp) from sensors where voltage < 418 and time(result_time) between "09:00:00" and "12:00:00";
 
 .print "\n Exercici 4:\n"
-select avg(temp) from sensors where nodeid = 2 group by strftime("%H", result_time) having time(result_time) between "08:00:00" and "12:00:00";
+/*
+select temp from sensors where nodeid = 2 group by strftime("%H", result_time) having time(result_time) between "08:00:00" and "12:00:00";
+.print "\n"*/
+select calib from calib_temp where temp in
+      (select temp from sensors where nodeid = 2 and time(result_time) between "08:00:00" and "12:00:00" group by (result_time));
 
 .print "\n Exercici 5:\n"
 /*
@@ -73,4 +77,4 @@ select result_time, epoch1, epoch2, epoch2 - epoch1 as computation from
                 where nodeid = 1 or nodeid = 2 group by result_time) where epoch2 - epoch1 >= 1;
 
 .print "\n Exercici 6:\n"
-select epoch, count(nodeid) from sensors group by epoch;
+select epoch from(select epoch, count(nodeid) as n from sensors group by epoch) where n != 3;
