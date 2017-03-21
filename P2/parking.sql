@@ -44,3 +44,7 @@ select (strftime('%s','now')-DATA)/3600/24 from PK where PLACE = '0';
 
 /*gestiona las plazas vacias*/
 select (30 - COUNT (*) )As plaza_vacias  from PK where place  NOT NULL;
+
+/*cost del parking*/
+/*horas que tiene* precio por hora*/
+select ((strftime('%s','now')-DATA)/60) AS cost_parking  from PK;

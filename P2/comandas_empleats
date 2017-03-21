@@ -5,3 +5,4 @@ select  ID_EMPLEAT from  FEINA where  SALARI > (select max(SALARI)  from FEINA w
 UPDATE EMPLEAT set CIUTAT='Barcelona' where ID_EMPLEAT=22;
 select * from feina,manager where ID_EMPLEAT_COORDINADOR=ID_EMPLEAT;  
 select ID_EMPRESA from feina where max( COUNT (ID_EMPLEAT) );
+ select id_empleat from empleat where ciutat in (select ciutat from empresa where empresa.ciutat=empleat.ciutat);
