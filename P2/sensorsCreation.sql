@@ -47,7 +47,30 @@ INSERT INTO sensors (result_time,epoch,nodeid,light,temp,voltage) VALUES (DATETI
 CREATE TABLE calib_temp as select temp, avg(temp)+temp as calib from sensors group by temp;
 CREATE TABLE calib_light as select light, avg(light)+light as calib from sensors group by light;
 
+.mode column
+.header on
+
 .print "\n Exercici 1:\n"
 select id, result_time from sensors where light > 550;
 
-.print "\n Exercici 2:\n"
+.print "\n Exercici 2:\n---CAP SENSOR TE DADES DAQUESTES HORES, POSEM DESDE LES 11 FINS LES 12---\n"
+select avg(light) from sensors where nodeid=1 and time(result_time) between "11:00:00" and "12:00:00";
+
+.print "\n Exercici 3:\n"
+select avg(light), avg(temp) from sensors where voltage < 418 and time(result_time) between "09:00:00" and "12:00:00";
+
+.print "\n Exercici 4:\n"
+select avg(temp) from sensors where nodeid = 2 group by strftime("%H", result_time) having time(result_time) between "08:00:00" and "12:00:00";
+
+.print "\n Exercici 5:\n"
+/*
+taula de dades entrants a la hora concreta pels sensors 1 i 2.
+select result_time, min(epoch) as epoch1, max(epoch) as epoch2 from sensors
+                          where nodeid = 1 or nodeid = 2 group by result_time;
+.print "\n"*/
+select result_time, epoch1, epoch2, epoch2 - epoch1 as computation from
+        (select result_time, min(epoch) as epoch1, max(epoch) as epoch2 from sensors
+                where nodeid = 1 or nodeid = 2 group by result_time) where epoch2 - epoch1 >= 1;
+
+.print "\n Exercici 6:\n"
+select epoch, count(nodeid) from sensors group by epoch;
