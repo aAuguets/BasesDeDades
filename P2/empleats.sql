@@ -88,15 +88,15 @@ select * from empleat;
 update feina set salari=salari*1.10 where id_empleat in (select ID_EMPLEAT_COORDINADOR from manager);
 select * from feina;
 
+.print "\n Exercisi 8"
 select ID_EMPLEAT from EMPLEAT where CIUTAT in (select CIUTAT from EMPRESA where EMPRESA.CIUTAT = EMPLEAT.CIUTAT);
 
 .print "\n Exercisi 9"
 select ID_EMPLEAT from empleat where ciutat in
     (select ciutat from empleat where ID_EMPLEAT in
-        (select ID_EMPLEAT_COORDINADOR from manager))and ID_EMPLEAT not in
-            (select ID_EMPLEAT_COORDINADOR from manager);
+        (select ID_EMPLEAT_COORDINADOR from manager))and ID_EMPLEAT not in (select ID_EMPLEAT_COORDINADOR from manager);
+
 
 .print "\n Exercisi 10"
 delete from feina where id_empresa='Bank Newton';
-
 select * from feina;
