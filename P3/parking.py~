@@ -1,0 +1,109 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
+import sqlite3 as lite
+import sys
+import datetime
+
+def crear_bd():
+     db = lite.connect('parking.db')
+     cursor= db.cursor()
+     
+     # definimos nuestra base de datos(los campos)
+     cursor.executescript("""
+     DROP TABLE IF EXISTS PK;
+     CREATE TABLE PK(
+     PLACE INTEGER UNIQUE NOT NULL,
+     NP CHAR(7) PRIMARY KEY,
+     COLOR CHAR(7),
+
+     BRAND CHAR (10),
+     DATA CHAR(19)
+     ); """)
+     #actualizo la base de datos
+     db.commit()
+     db.close()
+
+def menu():
+    """
+    """
+    print "1. Anadir COCHE."
+    print "2. Quitar COCHE."
+    print "3. Plazas dispobibles."
+    print "4. Comprueba Estado de la plaza."
+    print "5. Comprueba vehiculo."
+    print "6. Vehiculos de un solo color."
+    print "7. Vehiculos de una sola marca."
+    print "8. Help."
+    print "9. Exit"
+    
+def add_elementos():
+
+    con=lite.connect('parking.db')
+    cursor=con.cursor()
+    cursor.executescript("""
+    INSERT INTO PK (PLACE,NP,COLOR,BRAND, DATA) VALUES (23 , '1234ASD', 'Red','Opel', strftime('%s', 'now'));
+    INSERT INTO PK (PLACE,NP,COLOR,BRAND, DATA) VALUES (0 , '1234ASQ', 'Red', 'Ferrari', strftime('%s','now'));
+    INSERT INTO PK (PLACE,NP,COLOR,BRAND, DATA) VALUES (2 , '1234ASE', 'Blue', 'Tata', strftime('%s','now'));
+    INSERT INTO PK (PLACE,NP,COLOR,BRAND, DATA) VALUES (3 , '1234ASU', 'Blue', 'Toyota', strftime('%s','now'));
+    INSERT INTO PK (PLACE,NP,COLOR,BRAND, DATA) VALUES (1 , '1234ASI', 'Black', 'Opel', strftime('%s','now'));
+    INSERT INTO PK (PLACE,NP,COLOR,BRAND, DATA) VALUES (6 , '1234ASK', 'White', 'Renault', strftime('%s','now'));
+    INSERT INTO PK (PLACE,NP,COLOR,BRAND, DATA) VALUES (25 , '1234ASL', 'White', 'Honda', strftime('%s','now'));
+    INSERT INTO PK (PLACE,NP,COLOR,BRAND, DATA) VALUES (22 , '1234ASB', 'Blue', 'Honda', strftime('%s','now'));
+    """)
+    
+def add_car():
+    """
+    """
+    try:
+        conect=lite.connect('parking.db')
+        cursor=conect.cursor()
+        plaza=5
+        matricula= "pla56324"#raw_input("matricula")
+        color="rojo"#raw_input("color?")
+        marca="fiat"#raw_input("marca?")
+        hora="25/5/12"
+        cursor.execute('''
+        INSERT INTO PK(PLACE,NP,COLOR,BRAND,DATA)
+        VALUES(?,?,?,?,?)''',(plaza,matricula,color,marca,hora))
+        conect.commit()
+        conect.close()
+    except:
+        "ERROR 1"
+        return 0
+
+def del_car():
+    try:
+        conect=lite.connect('parking.db')
+        cursor=conect.cursor()
+        plaza=1
+        cursor.execute('''DELETE FROM PK WHERE PLACE = ? ''',(plaza,))
+        conect.commit()
+        conect.close()
+                      
+    except:
+        print "ERR del" 
+    
+
+def muestra_tabla():
+    try:
+        conect=lite.connect('parking.db')
+        cursor=conect.cursor()
+        for row in cursor.execute('SELECT * from PK'):
+            print('{0}:{1}:{2}:{3}:{4}'.format(row[0],row[1],row[2],row[3],row[4])) 
+        conect.close()
+    except:
+        print "ERR mostrar tabla"
+
+if __name__=='__main__':
+    crear_bd()
+    add_elementos()
+    add_car()
+    print "añade"
+    muestra_tabla()
+    del_car()
+    muestra_tabla()
+    
+        
+
+
