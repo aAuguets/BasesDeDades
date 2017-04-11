@@ -32,7 +32,11 @@ def crear_bd():
     con.close()
 
 def _formatMatriculaValid(np):
+    """
+    Comprova si la matricula te el format correcte (matricula espanyola)
+    """
     return len(np)==7 and np[:4].isdigit() and np[4:].isalpha()
+
 def add_car(matricula, posicio, color, marca):
     """
     Afegeix un cotxe amb els atributs de la funcio a la base de dades.
@@ -45,13 +49,27 @@ def add_car(matricula, posicio, color, marca):
             cur.execute("INSERT INTO parking(id_cotxe, placa, entrada) values (?,?, DATETIME('now'));",(matricula, posicio))
             con.commit()
         except lite.IntegrityError:
-            print "error"
+            print "Error"
     else:
         print("Format matricula invalid.")
     con.close()
+
+def posicioAlParking(matricula):
+    if(_formatMatriculaValid(matricula)):
+        con = lite.connect('parking.db')
+        cur = con.cursor()
+        try:
+            cur.execute("SELECT placa FROM parking WHERE id_cotxe=?;",(matricula,))
+            row = cur.fetchone()
+            print "El cotxe es troba a la plaça", row[0]
+        except:
+            pass
+    else:
+        print("Format matricula invalid per buscar la seva posicio.")
 
 #TESTS d'execucio.
 #crear_bd()
 add_car("9999AAA", 1, "BLAU", "DEP")
 add_car("1111AAA", 2, "BLAU", "DEP")
 add_car("11111EE", 3, "BLAU", "DEP")
+posicioAlParking("9999AAA")
