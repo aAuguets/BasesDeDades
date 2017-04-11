@@ -104,16 +104,32 @@ def infoCotxeMatricula(matricula):
         con.close()
     else:
         print("Format matricula invalid per buscar la seva informació.")
-
+def infoCotxePosicio(placa):
+    """
+    Retorna info del cotxe que ocupa la plaça.
+    """
+    con = lite.connect('parking.db')
+    cur = con.cursor()
+    try:
+        cur.execute("SELECT * FROM cotxes WHERE id_cotxe in (SELECT id_cotxe FROM parking WHERE placa=?);",(placa,))
+        row = cur.fetchone()
+        if row:
+            print "El cotxe a la placa ",placa," te aquesta informació:\n","\tMatr.: %s\n\tColor: %s\n\tMarca: %s" % (row[0], row[1], row[2])
+        else:
+            print "La plaça", placa,"esta buida."
+    except:
+        pass
+    con.close()
 #TESTS d'execucio.
 #crear_bd()
 add_car("9999AAA", 1, "BLAU", "DEP")
 add_car("1111AAA", 2, "BLAU", "DEP")
-add_car("11111EE", 3, "BLAU", "DEP")
-add_car("2222AAA", 4, "BLAU", "DEP")
+add_car("1111AAA", 3, "BLAU", "DEP")
+add_car("2222AAA", 2, "BLAU", "DEP")
 add_car("3333AAA", 5, "BLAU", "DEP")
 add_car("4444EEE", 1, "BLAU", "DEP")
 posicioAlParking("9999AAA")
 matriculaAlParking(2)
 matriculaAlParking(99)
 infoCotxeMatricula("9999AAA")
+infoCotxePosicio(2)
