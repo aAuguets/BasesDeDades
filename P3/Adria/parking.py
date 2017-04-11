@@ -23,7 +23,7 @@ def crear_bd():
 
         CREATE TABLE parking(
                 id_cotxe CHAR(7) PRIMARY KEY,
-                placa INT,
+                placa INT UNIQUE,
                 entrada datetime,
                 sortida datetime,
                 FOREIGN KEY(id_cotxe) REFERENCES cotxes(id_cotxe) ON DELETE CASCADE);
@@ -49,7 +49,7 @@ def add_car(matricula, posicio, color, marca):
             cur.execute("INSERT INTO parking(id_cotxe, placa, entrada) values (?,?, DATETIME('now'));",(matricula, posicio))
             con.commit()
         except lite.IntegrityError:
-            print "Error. <Ja dins.>"
+            print "Error."
     else:
         print("Format matricula invalid.")
     con.close()
@@ -110,6 +110,9 @@ def infoCotxeMatricula(matricula):
 add_car("9999AAA", 1, "BLAU", "DEP")
 add_car("1111AAA", 2, "BLAU", "DEP")
 add_car("11111EE", 3, "BLAU", "DEP")
+add_car("2222AAA", 4, "BLAU", "DEP")
+add_car("3333AAA", 5, "BLAU", "DEP")
+add_car("4444EEE", 1, "BLAU", "DEP")
 posicioAlParking("9999AAA")
 matriculaAlParking(2)
 matriculaAlParking(99)
