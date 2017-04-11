@@ -49,7 +49,7 @@ def add_car(matricula, posicio, color, marca):
             cur.execute("INSERT INTO parking(id_cotxe, placa, entrada) values (?,?, DATETIME('now'));",(matricula, posicio))
             con.commit()
         except lite.IntegrityError:
-            print "Error"
+            print "Error. <Ja dins.>"
     else:
         print("Format matricula invalid.")
     con.close()
@@ -71,16 +71,39 @@ def posicioAlParking(matricula):
     else:
         print("Format matricula invalid per buscar la seva posicio.")
 
-def matriculaAlParking(posicio):
+def matriculaAlParking(placa):
+    """
+    Retorna quina matricula hi ha al parking en aquesta placa.
+    """
     con = lite.connect('parking.db')
     cur = con.cursor()
     try:
-        cur.execute("SELECT id_cotxe FROM parking WHERE placa=?;",(posicio,))
+        cur.execute("SELECT id_cotxe FROM parking WHERE placa=?;",(placa,))
         row = cur.fetchone()
-        print "En la Posicio", posicio, " hi ha el cotxe amb matricula", row[0]
+        if row:
+            print "En la Posicio", placa, " hi ha el cotxe amb matricula", row[0]
+        else:
+            print "La plaça", placa,"esta buida."
     except:
         pass
     con.close()
+
+def infoCotxeMatricula(matricula):
+    """
+    Retorna tota informacio del cotxe d'aquesta matricula.
+    """
+    if(_formatMatriculaValid(matricula)):
+        con = lite.connect('parking.db')
+        cur = con.cursor()
+        try:
+            cur.execute("SELECT * FROM cotxes WHERE id_cotxe=?;",(matricula,))
+            row = cur.fetchone()
+            print "El cotxe amb matricula",matricula," te aquesta informació:\n","\tMatr.: %s\n\tColor: %s\n\tMarca: %s" % (row[0], row[1], row[2])
+        except:
+            pass
+        con.close()
+    else:
+        print("Format matricula invalid per buscar la seva informació.")
 
 #TESTS d'execucio.
 #crear_bd()
@@ -88,4 +111,6 @@ add_car("9999AAA", 1, "BLAU", "DEP")
 add_car("1111AAA", 2, "BLAU", "DEP")
 add_car("11111EE", 3, "BLAU", "DEP")
 posicioAlParking("9999AAA")
-matriculaAlParking(1)
+matriculaAlParking(2)
+matriculaAlParking(99)
+infoCotxeMatricula("9999AAA")
