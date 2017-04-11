@@ -55,17 +55,32 @@ def add_car(matricula, posicio, color, marca):
     con.close()
 
 def posicioAlParking(matricula):
+    """
+    Retorna a quina posicio es troba dins el parking aquesta matricula.
+    """
     if(_formatMatriculaValid(matricula)):
         con = lite.connect('parking.db')
         cur = con.cursor()
         try:
             cur.execute("SELECT placa FROM parking WHERE id_cotxe=?;",(matricula,))
             row = cur.fetchone()
-            print "El cotxe es troba a la plaça", row[0]
+            print "El cotxe amb matricula",matricula," es troba a la plaça", row[0]
         except:
             pass
+        con.close()
     else:
         print("Format matricula invalid per buscar la seva posicio.")
+
+def matriculaAlParking(posicio):
+    con = lite.connect('parking.db')
+    cur = con.cursor()
+    try:
+        cur.execute("SELECT id_cotxe FROM parking WHERE placa=?;",(posicio,))
+        row = cur.fetchone()
+        print "En la Posicio", posicio, " hi ha el cotxe amb matricula", row[0]
+    except:
+        pass
+    con.close()
 
 #TESTS d'execucio.
 #crear_bd()
@@ -73,3 +88,4 @@ add_car("9999AAA", 1, "BLAU", "DEP")
 add_car("1111AAA", 2, "BLAU", "DEP")
 add_car("11111EE", 3, "BLAU", "DEP")
 posicioAlParking("9999AAA")
+matriculaAlParking(1)
