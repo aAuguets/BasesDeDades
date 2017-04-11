@@ -6,6 +6,9 @@ import sys
 import datetime
 
 def crear_bd():
+    """
+    Crea la nostra base de dades desde zero cada cop que es cridada.
+    """
     con = lite.connect('parking.db')
     cur = con.cursor()
     cur.executescript("""
@@ -28,21 +31,27 @@ def crear_bd():
     con.commit()
     con.close()
 
-
+def _formatMatriculaValid(np):
+    return len(np)==7 and np[:4].isdigit() and np[4:].isalpha()
 def add_car(matricula, posicio, color, marca):
     """
     Afegeix un cotxe amb els atributs de la funcio a la base de dades.
     """
     con = lite.connect('parking.db')
     cur = con.cursor()
-    try:
-        cur.execute("INSERT INTO cotxes(id_cotxe, color, marca) values (?,?,?);", (matricula, color, marca))
-        cur.execute("INSERT INTO parking(id_cotxe, placa, entrada) values (?,?, DATETIME('now'));",(matricula, posicio))
-        con.commit()
-    except lite.IntegrityError:
-        print "error"
+    if(_formatMatriculaValid(matricula)):
+        try:
+            cur.execute("INSERT INTO cotxes(id_cotxe, color, marca) values (?,?,?);", (matricula, color, marca))
+            cur.execute("INSERT INTO parking(id_cotxe, placa, entrada) values (?,?, DATETIME('now'));",(matricula, posicio))
+            con.commit()
+        except lite.IntegrityError:
+            print "error"
+    else:
+        print("Format matricula invalid.")
     con.close()
 
 #TESTS d'execucio.
-crear_bd()
+#crear_bd()
 add_car("9999AAA", 1, "BLAU", "DEP")
+add_car("1111AAA", 2, "BLAU", "DEP")
+add_car("11111EE", 3, "BLAU", "DEP")
