@@ -192,9 +192,9 @@ def muestra_tabla(taula):
         #print rows
             print "%s \t%-10s \t%s" % (col_names[0],col_names[1],col_names[2])
             for row in rows:
-                print "%8s %-10s %s" %row
+                print "%8s \t%-10s \t%s" %row
         elif len(col_names)==4:
-            print "%s \t%-10s \t%s \t%s" % (col_names[0],col_names[1],col_names[2],col_names[3])
+            print "%s \t%-10s \t%s \t\t%s" % (col_names[0],col_names[1],col_names[2],col_names[3])
             for row in rows:
                 print "%7s \t%-10s \t%s \t%s" %row
         conect.close()
@@ -215,6 +215,22 @@ def placesBuides():
         print "El nombre de places disponibles es:",row[0]
     con.close()
 
+def buscar_cotxe_color(color):
+    """
+    Funcio que retorna tots els cotxes amb el color=?,'color'
+    """
+    con=lite.connect('parking.db')
+    cur=con.cursor()
+    try:
+        cur.execute("SELECT id_cotxe FROM cotxes WHERE color=?;",(color,))
+        rows=cur.fetchall()
+        print "Els cotxes amb el color ",color," son: "
+        for row in rows:
+            print row[0]
+    except:
+        print "ERROR"
+        pass
+    con.close()
 def TempsCotxe(matricula):
     """
     Funcion que mostra el temps que porta el cotxe al parking i quan
@@ -230,10 +246,10 @@ def TempsCotxe(matricula):
             if row[0] < 60:
                 print "El coche amb matricula",matricula," porta", row[0],"minuts"
                 print "en total ha de pagar",row[0]*0.5,"€"
-            elif 60 < row[0]<24:
-                print "El coche amb matricula",matricula," porta", row[0]/60,"Horas"
+            elif 60 < row[0]<3600:
+                print "El coche amb matricula",matricula," porta", float(row[0]/60),"Horas"
             else:
-                print "El coche amb matricula",row[0]
+                print "El coche amb matricula",maricula ,"Porta ",row[0],
     except:
         print "EEROR NO"
     con.close()
@@ -264,6 +280,27 @@ def info_table(table):
         print d[0], d[1], d[2]
     con.close()
 
+def modifica_color_cotxe():
+    """
+    Funcion que modifica el color del coche que se le pasa como parametro.
+    """
+    try:
+        con=lite.connect('parking.db')
+        cur=con.cursor()
+        matricula=raw_input("Introduce matricula del cotxe que es vol canviar el color: ")
+        if (_formatMatriculaValid(matricula)):
+            new_color=raw_input("Nou color del cotxe: ")
+            cur.execute("UPDATE cotxes SET color=? WHERE id_cotxe=?" ,(new_color,matricula,))
+            con.commit()
+            print "Number of rows updated: %d" % cur.rowcount
+        else:
+            print "Matricula introduia incorrectament"
+    except:
+        print("EERROR")
+        pass
+    con.close()
+
+
 #TESTS d'execucio.
 #crear_bd()
 #add_car("9999AAA", 1, "BLAU", "DEP")
@@ -277,17 +314,19 @@ def info_table(table):
 #add_car("5555AAA", 9, "BLAU", "DEP")
 #add_car("6666AAA", 10, "BLAU", "DEP")
 #muestra_tabla()
-del_car("9999AAA")
+#del_car("9999AAA")
 #add_car("7777AAA", 1, "BLAU", "DEP")
 #add_car("8888EEE", , "BLAU", "DEP")
-posicioAlParking("9999AAA")
+#posicioAlParking("9999AAA")
 #posicioAlParking("1111AAA")
 TempsCotxe("1111AAA")
-matriculaAlParking(2)
+#matriculaAlParking(2)
 #matriculaAlParking(99)
-infoCotxeMatricula("9999AAA")
+infoCotxeMatricula("1111AAA")
 #infoCotxePosicio(1)
 #placesBuides()
-muestra_tabla('parking')
 #mostra_nom_taules()
 #info_table('parking')
+#modifica_color_cotxe()
+muestra_tabla('cotxes')
+buscar_cotxe_color('BLAU')
