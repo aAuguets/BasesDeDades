@@ -36,13 +36,11 @@ def crear_bd():
         """)
     con.commit()
     con.close()
-
 def _formatMatriculaValid(np):
     """
     Comprova si la matricula te el format correcte (matricula espanyola)
     """
     return len(np)==7 and np[:4].isdigit() and np[4:].isalpha()
-
 def add_car(matricula, posicio, color, marca):
     """
     Afegeix un cotxe amb els atributs de la funcio a la base de dades.
@@ -64,7 +62,6 @@ def add_car(matricula, posicio, color, marca):
     else:
         print("Format matricula invalid.")
     con.close()
-
 def posicioAlParking(matricula):
     """
     Retorna a quina posicio es troba dins el parking aquesta matricula.
@@ -85,7 +82,6 @@ def posicioAlParking(matricula):
         con.close()
     else:
         print("Format matricula invalid per buscar la seva posicio.")
-
 def matriculaAlParking(placa):
     """
     Retorna quina matricula hi ha al parking en aquesta placa.
@@ -102,7 +98,6 @@ def matriculaAlParking(placa):
     except:
         pass
     con.close()
-
 def infoCotxeMatricula(matricula):
     """
     Retorna tota informacio del cotxe d'aquesta matricula.
@@ -118,11 +113,11 @@ def infoCotxeMatricula(matricula):
             else:
                 print "El coche amb matricula: ",matricula," no es troba dintre del Parking"
         except:
+            print "ERROR"
             pass
         con.close()
     else:
         print("Format matricula invalid per buscar la seva informació.")
-
 def infoCotxePosicio(placa):
     """
     Retorna info del cotxe que ocupa la plaça.
@@ -139,7 +134,6 @@ def infoCotxePosicio(placa):
     except:
         pass
     con.close()
-
 def del_car(matricula):
     """
     Afegeix un cotxe amb els atributs de la funcio a la base de dades.
@@ -158,50 +152,53 @@ def del_car(matricula):
     else:
         print("Format matricula invalid.")
     con.close()
-
 def totalPlacesLliures():
     global max
     print max
-
 def placaLliure():
+    """
+    Funcio que retorna la primera plaza lliure
+    """
     lliures = []
     con = lite.connect('parking.db')
     cur = con.cursor()
     try:
-        cur.execute("SELECT placa FROM parking")
+        cur.execute("SELECT placa FROM parking ORDER BY placa ASC")
         rows = cur.fetchall()
         for row in rows:
             lliures.append(row[0])
-        for i in l:
-            if i not in lliures:
-                print i
+        print lliures
+        for i in range(1,len(lliures)+1):
+            if i != lliures[i-1]:
+                result= i
+                break
     except lite.IntegrityError:
         pass
     con.close()
-
+    return result
 def muestra_tabla(taula):
     try:
         conect=lite.connect('parking.db')
         cursor=conect.cursor()
         print "\n\nTaula ",taula
-        cursor.execute("SELECT * from {}".format(taula))
-        col_names=[cn[0] for cn in cursor.description]
-        #print col_names
-        rows=cursor.fetchall()
-        if len(col_names)==3:
-        #print rows
+        if taula=='cotxes':
+            cursor.execute("SELECT * from {}".format(taula))
+            col_names=[cn[0] for cn in cursor.description]
             print "%s \t%-10s \t%s" % (col_names[0],col_names[1],col_names[2])
+            rows=cursor.fetchall()
             for row in rows:
                 print "%8s \t%-10s \t%s" %row
-        elif len(col_names)==4:
+        else:
+            cursor.execute("SELECT * from {} ORDER BY placa ASC".format(taula))
+            col_names=[cn[0] for cn in cursor.description]
+            rows=cursor.fetchall()
             print "%s \t%-10s \t%s \t\t%s" % (col_names[0],col_names[1],col_names[2],col_names[3])
             for row in rows:
                 print "%7s \t%-10s \t%s \t%s" %row
-        conect.close()
-        print
     except:
         print "ERR mostrar tabla"
-
+        pass
+    conect.close()
 def placesBuides():
     """
     Funcio que retorna la quantitat de places buides.
@@ -214,7 +211,6 @@ def placesBuides():
     if row:
         print "El nombre de places disponibles es:",row[0]
     con.close()
-
 def buscar_cotxe_color(color):
     """
     Funcio que retorna tots els cotxes amb el color=?,'color'
@@ -231,6 +227,19 @@ def buscar_cotxe_color(color):
         print "ERROR"
         pass
     con.close()
+def buscar_cotxe_marca(marca):
+    con=lite.connect('parking.db')
+    cur=con.cursor()
+    try:
+        cur.execute("SELECT id_cotxe FROM cotxes WHERE marca=?;",(marca,))
+        rows=cur.fetchall()
+        print "Els cotxes amb la marca ",marca," son: "
+        for row in rows:
+            print row[0]
+    except:
+        print "ERROR"
+        pass
+    con.close()
 def TempsCotxe(matricula):
     """
     Funcion que mostra el temps que porta el cotxe al parking i quan
@@ -241,7 +250,6 @@ def TempsCotxe(matricula):
     try:
         cursor.execute("SELECT (strftime('%s',DATETIME('now'))-strftime('%s',entrada))/60 from parking where id_cotxe=?",(matricula,))
         row=cursor.fetchone()
-
         if row:
             if row[0] < 60:
                 print "El coche amb matricula",matricula," porta", row[0],"minuts"
@@ -253,7 +261,6 @@ def TempsCotxe(matricula):
     except:
         print "EEROR NO"
     con.close()
-
 def mostra_nom_taules():
     """
     """
@@ -261,11 +268,10 @@ def mostra_nom_taules():
     cur=con.cursor()
     cur.execute("SELECT name FROM sqlite_master where type='table'")
     rows= cur.fetchall()
-    print "Les taules que conte  la base de dade son: "
+    print "\nLes taules que conte  la base de dade son: "
     for row in rows:
-        print row[0]
+        print "\t\t",row[0]
     con.close()
-
 def info_table(table):
     """
     Funcion que mostra la informacio PRAGMA de la taula que se le pasa como
@@ -277,9 +283,8 @@ def info_table(table):
     cur.execute("PRAGMA table_info({});".format(table))
     data = cur.fetchall()
     for d in data:
-        print d[0], d[1], d[2]
+        print "\t",d[0], d[1], d[2]
     con.close()
-
 def modifica_color_cotxe():
     """
     Funcion que modifica el color del coche que se le pasa como parametro.
@@ -299,6 +304,119 @@ def modifica_color_cotxe():
         print("EERROR")
         pass
     con.close()
+def menu():
+    print "\n MENU \n"
+    print "0. crear PARKING."
+    print "1. Anadir COCHE."
+    print "2. Quitar COCHE."
+    print "3. Plazas dispobibles del parking."
+    print "4. Consulta el estado de la plaza."
+    print "5. Consulta la posicion del cotxe per la matricula."
+    print "6. Consulta vehiculos de un solo color."
+    print "7. Consulta vehiculos de una sola marca."
+    print "8. Consulta las tablas de la base de dades"
+    print "9. Consulta SCHEMA de una tabla"
+    print "10. Muestra contingut de una taula."
+    print "11. Muestra info de un coche per la matricula."
+    print "12. Muestra info de un coche per la posicio que ocupa al parking."
+
+    print "13. Exit"
+def demana_dades():
+    matricula=raw_input("Introdueix matricula :")
+    if _formatMatriculaValid(matricula):
+        placa=input("Introdueix Posicio Al parking:")
+        if placa=='':
+            placa=placaLliure()
+        color=raw_input("Introdueix color del cotxe:")
+        marca=raw_input("Introdueix Marca del cotxe:")
+
+    else:
+        print "format de la matricula incorrecta"
+        return False
+    return matricula , placa , marca, color
+
+#infoCotxeMatricula('1111AAA')
+#infoCotxePosicio(1)
+if __name__ == '__main__':
+
+    print "Benvingut al PARKING"
+    menu()
+    #fpf=placaLliure()
+    opcion=raw_input("option: ")
+    while opcion != "11":
+        if opcion == "0":
+            crear_bd()
+            menu()
+            opcion=raw_input("option: ")
+        elif opcion == "1":
+            matricula,placa,marca,color = demana_dades()
+            add_car(matricula,placa,color,marca)
+            menu()
+            opcion=raw_input("option: ")
+        elif opcion == "2":
+            matricula=raw_input("Introdueix la matricula del cotxe que vol treure:")
+            if _formatMatriculaValid(matricula):
+                TempsCotxe(matricula)
+                del_car(matricula)
+            else:
+                print "Format de la matricula Incorrecta"
+            menu()
+            opcion=raw_input("option: ")
+        elif opcion == "3":
+			totalPlacesLliures()
+			menu()
+			opcion=raw_input("option: ")
+        elif opcion == "4":
+            matriculaAlParking(placa)
+            menu()
+            opcion=raw_input("option: ")
+        elif opcion == "5":
+            matricula=raw_input("Introdueix matricula a consultar")
+            if _formatMatriculaValid(matricula) :
+                posicioAlParking(matricula)
+            else:
+                print "Format de la matricula incorrecte"
+            menu()
+            opcion=raw_input("option: ")
+        elif opcion == "6" :
+            colo=raw_input("Introdueix el color que desitja buscar:")
+            buscar_cotxe_color(colo)
+            menu()
+            opcion = raw_input("option: ")
+        elif opcion == "7":
+            marca=raw_input("Introdueix la marca que desitja buscar: ")
+            buscar_cotxe_marca(marca)
+            menu()
+            opcion = raw_input("option: ")
+        elif opcion == "8":
+            mostra_nom_taules()
+            menu()
+            opcion = raw_input("option: ")
+        elif opcion == "9":
+            taula=raw_input("Quina Taula vol veure la info (cotxes/parking)?")
+            info_table(taula)
+            menu()
+            opcion = raw_input("option: ")
+        elif opcion == "10":
+            taula=raw_input("Quina Taula vol veure el contigut (cotxes/parking)?")
+            muestra_tabla(taula)
+            menu()
+            opcion = raw_input("option: ")
+        elif opcion == "11":
+            matricula=raw_input("Introdueix matricula a consultar")
+            if _formatMatriculaValid(matricula):
+                infoCotxeMatricula(matricula)
+            menu()
+            opcion = raw_input("option: ")
+        elif opcion == "12":
+            posicio=input("Introdueix posicio a consultar: ")
+            infoCotxePosicio(posicio)
+            menu()
+            opcion = raw_input("option: ")
+        else:
+			print "Wrong option"
+			menu()
+			opcion=raw_input("option: ")
 
 
 #TESTS d'execucio.
@@ -319,14 +437,14 @@ def modifica_color_cotxe():
 #add_car("8888EEE", , "BLAU", "DEP")
 #posicioAlParking("9999AAA")
 #posicioAlParking("1111AAA")
-TempsCotxe("1111AAA")
+#TempsCotxe("1111AAA")
 #matriculaAlParking(2)
 #matriculaAlParking(99)
-infoCotxeMatricula("1111AAA")
+#infoCotxeMatricula("1111AAA")
 #infoCotxePosicio(1)
 #placesBuides()
 #mostra_nom_taules()
 #info_table('parking')
 #modifica_color_cotxe()
-muestra_tabla('cotxes')
-buscar_cotxe_color('BLAU')
+#muestra_tabla('cotxes')
+#buscar_cotxe_color('BLAU')
