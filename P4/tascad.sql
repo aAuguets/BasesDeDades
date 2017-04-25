@@ -1,0 +1,90 @@
+PRAGMA foreign_key = ON;
+DROP TABLE IF EXISTS DEPARTAMENTS;
+DROP TABLE IF EXISTS EMPLEATS;
+DROP TABLE IF EXISTS CLIENTS;
+DROP TABLE IF EXISTS COMANDES;
+DROP TABLE IF EXISTS DETALL;
+DROP TABLE IF EXISTS PRODUCTES;
+
+CREATE TABLE IF NOT EXISTS DEPARTAMENTS(
+  dep     int(2),
+  depnom  text,
+  loc     text,
+  PRIMARY KEY (dep)
+);
+
+INSERT INTO DEPARTAMENTS VALUES (01, 'PRODUCCIO', 'MANRESA');
+INSERT INTO DEPARTAMENTS VALUES (02, 'MKT', 'LLEIDA');
+INSERT INTO DEPARTAMENTS VALUES (03, 'VENDES', 'GIRONA');
+INSERT INTO DEPARTAMENTS VALUES (04, 'RRHH', 'BARCELONA');
+
+CREATE TABLE IF NOT EXISTS EMPLEATS(
+  codi int,
+  cognom text not null,
+  ofici text,
+  alta date,
+  salari int,
+  comisio int,
+  cap int,
+  dep int(2) not null,
+  PRIMARY KEY (codi),
+  FOREIGN KEY (dep) REFERENCES DEPARTAMENTS(dep),
+  FOREIGN KEY (cap) REFERENCES EMPLEATS(codi)
+);
+
+INSERT INTO EMPLEATS VALUES (1,'MAS','VENEDOR','1970-02-20', 100000,10000,10,01);
+INSERT INTO EMPLEATS VALUES (10,'SAM','CAP','1970-02-02', 1000000,100000,NULL,01);
+INSERT INTO EMPLEATS VALUES (2,'JOPSEPHO','VENEDOR','1970-02-02', 1000000,100000,10,01);
+INSERT INTO EMPLEATS VALUES (3,'NEGRO','VENEDOR','1970-02-02', 1000000,100000,10,02);
+INSERT INTO EMPLEATS VALUES (4,'BLANCO','VENEDOR','1970-02-02', 1000000,100000,20,02);
+INSERT INTO EMPLEATS VALUES (5,'AZULAO','VENEDOR','1970-02-02', 1000000,100000,20,03);
+INSERT INTO EMPLEATS VALUES (20,'CACATUA','VENEDOR','1970-02-02', 1000000,100000,NULL,03);
+INSERT INTO EMPLEATS VALUES (6,'ESTIARTE','VENEDOR','1970-02-02', 1000000,100000,20,04);
+
+CREATE TABLE IF NOT EXISTS CLIENTS(
+  codi int,
+  nom text,
+  addr text,
+  ciutat text,
+  cp int(5),
+  telf int(9),
+  limcredit int,
+  representant int,
+  observacions text,
+  FOREIGN KEY (representant) REFERENCES EMPLEATS(codi)
+);
+
+INSERT INTO CLIENTS VALUES (100, 'JAMES', 'calle falsa 123', 'Springfield', 12345, 123456789, 1000 ,1, 'ASDASDF');
+
+CREATE TABLE IF NOT EXISTS COMANDES(
+  codi int PRIMARY KEY,
+  data date,
+  tipus int,
+  client int,
+  data_tramesa date,
+  total int,
+  FOREIGN KEY (client) REFERENCES clients(codi)
+);
+INSERT INTO COMANDES VALUES (610, '2016-09-07', 1, 100, '2017-01-08', 100);
+
+
+CREATE TABLE IF NOT EXISTS DETALL(
+  codi int PRIMARY KEY,
+  quantitat int,
+  preu int,
+  import int,
+  FOREIGN KEY (codi) REFERENCES COMANDES(codi)
+);
+
+INSERT INTO DETALL VALUES (610, 10, 100890, 58);
+
+CREATE TABLE IF NOT EXISTS PRODUCTES(
+  codi int,
+  descripcio text
+);
+
+.header on
+.mode column
+
+.print "\n1. Mostrar els empleats (codi i cognom) juntament amb el codi i nom del departament al qual pertanyen."
+SELECT e.codi, e.cognom, d.dep, d.depnom FROM EMPLEATS e INNER JOIN DEPARTAMENTS d ON e.dep = d.dep;
