@@ -32,14 +32,19 @@ CREATE TABLE IF NOT EXISTS EMPLEATS(
   FOREIGN KEY (cap) REFERENCES EMPLEATS(codi)
 );
 
-INSERT INTO EMPLEATS VALUES (1,'MAS','VENEDOR','1970-02-20', 100000,10000,10,01);
+INSERT INTO EMPLEATS VALUES (1,'MAS','VENEDOR','1970-02-20', 10000,10000,10,01);
 INSERT INTO EMPLEATS VALUES (10,'SAM','CAP','1970-02-02', 1000000,100000,NULL,01);
-INSERT INTO EMPLEATS VALUES (2,'JOPSEPHO','VENEDOR','1970-02-02', 1000000,100000,10,01);
-INSERT INTO EMPLEATS VALUES (3,'NEGRO','VENEDOR','1970-02-02', 1000000,100000,10,02);
-INSERT INTO EMPLEATS VALUES (4,'BLANCO','VENEDOR','1970-02-02', 1000000,100000,20,02);
-INSERT INTO EMPLEATS VALUES (5,'AZULAO','VENEDOR','1970-02-02', 1000000,100000,20,03);
-INSERT INTO EMPLEATS VALUES (20,'CACATUA','VENEDOR','1970-02-02', 1000000,100000,NULL,03);
-INSERT INTO EMPLEATS VALUES (6,'ESTIARTE','VENEDOR','1970-02-02', 1000000,100000,20,04);
+INSERT INTO EMPLEATS VALUES (2,'JOPSEPHO','VENEDOR','1970-02-02', 230000,100000,10,01);
+INSERT INTO EMPLEATS VALUES (3,'NEGRO','VENEDOR','1970-02-02', 5660000,100000,10,02);
+INSERT INTO EMPLEATS VALUES (4,'BLANCO','VENEDOR','1970-02-02', 400000,100000,20,02);
+INSERT INTO EMPLEATS VALUES (5,'AZULAO','COMPRADOR','1970-02-02', 1000,100000,20,03);
+INSERT INTO EMPLEATS VALUES (20,'CACATUA','VENEDOR','1970-02-02', 99900000,100000,NULL,03);
+INSERT INTO EMPLEATS VALUES (6,'ESTIARTE','VIGILANT','1970-02-02', 10,100000,20,04);
+INSERT INTO EMPLEATS VALUES (7,'CASADO','VENEDOR','1970-02-02', 20000,100000,20,04);
+INSERT INTO EMPLEATS VALUES (8,'SALA','VIGILANT','1970-02-02', 1,100000,20,04);
+INSERT INTO EMPLEATS VALUES (9,'PEPER','VENEDOR','1970-02-02', 1000,100000,20,20);
+INSERT INTO EMPLEATS VALUES (12,'PEP','COMPRADOR','1970-02-02', 1000,100000,20,20);
+INSERT INTO EMPLEATS VALUES (11,'PEPE','VENEDOR','1970-02-02', 1000,100000,20,03);
 
 CREATE TABLE IF NOT EXISTS CLIENTS(
   codi int,
@@ -55,6 +60,10 @@ CREATE TABLE IF NOT EXISTS CLIENTS(
 );
 
 INSERT INTO CLIENTS VALUES (100, 'JAMES', 'calle falsa 123', 'Springfield', 12345, 123456789, 1000 ,1, 'ASDASDF');
+INSERT INTO CLIENTS VALUES (100, 'PEPE', 'calle falsa 123', 'Springfield', 12345, 123456789, 1000 ,10, 'ASDASDF');
+INSERT INTO CLIENTS VALUES (100, 'CRISTIANO', 'calle falsa 123', 'Springfield', 12345, 123456789, 1000 ,2, 'ASDASDF');
+INSERT INTO CLIENTS VALUES (100, 'BALE', 'calle falsa 123', 'Springfield', 12345, 123456789, 1000 ,5, 'ASDASDF');
+INSERT INTO CLIENTS VALUES (100, 'RAMOS', 'calle falsa 123', 'Springfield', 12345, 123456789, 1000 ,8, 'ASDASDF');
 
 CREATE TABLE IF NOT EXISTS COMANDES(
   codi int PRIMARY KEY,
@@ -88,3 +97,32 @@ CREATE TABLE IF NOT EXISTS PRODUCTES(
 
 .print "\n1. Mostrar els empleats (codi i cognom) juntament amb el codi i nom del departament al qual pertanyen."
 SELECT e.codi, e.cognom, d.dep, d.depnom FROM EMPLEATS e INNER JOIN DEPARTAMENTS d ON e.dep = d.dep;
+
+.print "\n2. Mostrar tots els departaments (codi i descripció) acompanyats del salari més alt dels seus empleats"
+SELECT d.dep as Departament, d.depnom as Nom, e.salari FROM DEPARTAMENTS d INNER JOIN EMPLEATS e ON d.dep = e.dep
+        GROUP BY d.dep ORDER BY e.salari DESC;
+
+.print "\n3. Mostrar, en l’esquema empresa, tots els empleats acompanyats dels clients de qui són representants."
+SELECT e.cognom as empleat, c.nom as client FROM EMPLEATS e LEFT JOIN CLIENTS c ON e.codi = c.representant;
+
+.print "\n4. Mostrar tots els clients acompanyats de l’empleat que tenen com a representant."
+SELECT c.nom as client, e.cognom as empleat FROM CLIENTS c LEFT JOIN EMPLEATS e ON e.codi = c.representant;
+
+.print "\n4."
+
+.print "\n5."
+
+.print "\n7. Mostrar els empleats de cada departament que tenen un salari major que el salari mitjà del mateix departament."
+SELECT e.dep, e.cognom, e.salari FROM EMPLEATS e INNER JOIN (SELECT d.dep, AVG(e.salari) AS salari
+    FROM EMPLEATS e INNER JOIN DEPARTAMENTS d ON e.dep = d.dep GROUP BY d.dep)
+          e_avg ON e.dep = e_avg.dep AND e.salari > e_avg.salari;
+
+
+.print "\n8. Mostrar els empleats que tenen el mateix ofici que l’ofici que té l’empleat de cognom SALA."
+SELECT * FROM EMPLEATS WHERE ofici = (SELECT ofici FROM EMPLEATS WHERE cognom = "SALA");
+
+.print "\n9. Mostrar els noms i oficis dels empleats del departament 20 la feina dels quals coincideixi amb la d’algun empleat del departament de ’VENDES’."
+SELECT e1.cognom, e1.ofici
+    FROM EMPLEATS e1 INNER JOIN EMPLEATS e2 ON e1.ofici = e2.ofici
+                INNER JOIN DEPARTAMENTS d ON e2.dep = d.dep
+    WHERE e1.dep = 20 AND d.depnom = "VENDES" GROUP BY(e1.ofici);
