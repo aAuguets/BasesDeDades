@@ -1,17 +1,108 @@
-from urllib2 import urlopen
-from csv import reader
+# -*- coding: utf-8 -*-
+import sqlite3 as lite
+import sys
+from opendata import *
 
-#Acces a dades bigdata http://opendata.bcn.cat/opendata/ca
-f=urlopen("http://opendata.bcn.cat/opendata/ca/descarrega-fitxer?url=http%3a%2f%2fbismartopendata.blob.core.windows.net%2fopendata%2fopendata%2f2014_omissions-sexe.csv&name=opendata_2014_omissions-sexe.csv")
-j=reader(f)
-for i in j:
-    print i
+con=lite.connect('accidents.db')
+con.text_factory = str
 
+def createDBAccidents():
+    try:
+        cur=con.cursor()
+        cur.execute("PRAGMA foreign_keys=ON")
+        cur.execute("DROP TABLE IF EXISTS ACCIDENTS")
+        cur.executescript("""
+            CREATE TABLE ACCIDENTS (
+                ID INTEGER PRIMARY KEY AUTOINCREMENT ,
+                EXPEDIENT TEXT,
+                NOM_DISTRICTE TEXT,
+                NOM_BARRI TEXT,
+                NOM_CARRER TEXT,
+                DIA_SETMANA TEXT,
+                MES TEXT,
+                DIA TEXT,
+                FRANJA TEXT,
+                HORA TEXT,
+                TIPO_VEHICLE TEXT,
+                SEXE TEXT,
+                EDAT INTEGER
 
-#Acces a dades bigdata opendata.manresa.cat
-#Acces a dades poblacio per nacionalitat
-f=urlopen("http://tecckan01.tecnogeo.es/dataset/e9f600ff-983a-4861-95d1-a748c372a33a/resource/fafe5db6-9375-44ff-af51-283dfb0af6b8/download/2014.csv")
-j=reader(f)
-for i in j:
-    print i
+            );
 
+        """)
+    except lite.Error,e:
+        print "eee"
+        """
+        if con:
+            con.rollback()
+            print "Errorlaa %s: " % e.args[0]
+            sys.exit(1)
+            """
+
+def crearDBVehicles():
+    """
+    """
+    try:
+        cur=con.cursor()
+        cur.execute("PRAGMA foreign_keys=ON")
+        cur.execute("DROP TABLE IF EXISTS VEHICLES")
+        cur.executescript("""
+            CREATE TABLE VEHICLES (
+                ID INTEGER PRIMARY KEY AUTOINCREMENT ,
+                EXPEDIENT TEXT,
+                NOM_DISTRICTE TEXT,
+                NOM_BARRI TEXT,
+                NOM_CARRER TEXT,
+                DIA_SETMANA TEXT,
+                MES TEXT,
+                DIA TEXT,
+                HORA TEXT,
+                TIPO_VEHICLE TEXT,
+                MARCA TEXT,
+                CARNET TEXT,
+                ANTIGUITAT INTEGER); """)
+    except lite.Error,e:
+        print "eee"
+        """
+        if con:
+            con.rollback()
+            print "Errorlaa %s: " % e.args[0]
+            sys.exit(1)
+            """
+
+def crearDBCausalitat():
+    try:
+        cur=con.cursor()
+        cur.execute("PRAGMA foreign_keys=ON")
+        cur.execute("DROP TABLE IF EXISTS CAUSALITAT")
+        cur.executescript("""
+            CREATE TABLE CAUSALITAT(
+                ID INTEGER PRIMARY KEY AUTOINCREMENT ,
+                EXPEDIENT TEXT,
+                CAUSA TEXT); """)
+    except lite.Error,e:
+        print "eee"
+        """
+        if con:
+            con.rollback()
+            print "Errorlaa %s: " % e.args[0]
+            sys.exit(1)
+            """
+
+def addDataTable(dadesAcc,dadesVehi,dadesCausa):
+    with con:
+        cur=con.cursor()
+        for element in dadesAcc:
+            cur.execute("INSERT INTO ACCIDENTS VALUES(NULL,?,?,?,?,?,?,?,?,?,?,?,?)",tuple(element))
+        for element in dadesVehi:
+            cur.execute("INSERT INTO VEHICLES VALUES(NULL,?,?,?,?,?,?,?,?,?,?,?,?)",tuple(element))
+        for element in dadesCausa:
+            cur.execute("INSERT INTO CAUSALITAT VALUES(NULL,?,?)",tuple(element))
+#ID INTEGER AUTOINCREMENT PRIMARY KEY,
+createDBAccidents()
+crearDBVehicles()
+crearDBCausalitat()
+dadesA=getDadesAccidents()
+dadesV=getDadesVehicles()
+dadesCau=getDadesCausalitat()
+addDataTable(dadesA,dadesV,dadesCau)
