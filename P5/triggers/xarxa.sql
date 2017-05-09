@@ -140,3 +140,11 @@ begin
 	update usuaris set grau=new.grau where grau=new.grau -1 and  ID in (select ID2 from amistats where ID1=new.ID);
 end;
 */
+/*Tasca 6*/
+
+create trigger preferencies_usuaris after update on preferencies
+  when new.id2 in (select from amistats where id1=new.id2)
+  begin
+    delete from amistats where id1=new.id2 and id2=old.id2;
+    delete from amistats where id1=old.id2 and id2=new.id2;
+  end;
