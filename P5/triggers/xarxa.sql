@@ -125,6 +125,11 @@ begin
                              (ID2 in (select ID from usuaris where ID = new.id));
       	delete from usuaris where ID = new.id;
 end;
+/*Tasca5*/
+create trigger incrementa_grau_amics after update on usuaris
+begin
+  update usuaris set grau=new.grau where grau = old.grau;
+end;
 /*
 create trigger incrementa after update on usuaris
 begin
