@@ -42,7 +42,8 @@ insert into usuaris values (1501, 'Jessica', 11);
 insert into usuaris values (1304, 'Jordan', 12);
 insert into usuaris values (1025, 'John', 12);
 insert into usuaris values (1934, 'Kyle', 12);
-insert into usuaris values (1661, 'Logan', 12);
+insert into usuaris values (1661, 'Logan', NULL );
+insert into usuaris values (666,'Satan',22);
 
 insert into amistats values (1510, 1381);
 insert into amistats values (1510, 1689);
@@ -77,8 +78,48 @@ insert into preferencies values(1501, 1934);
 insert into preferencies values(1934, 1501);
 insert into preferencies values(1025, 1101);
 
-/*Tasca 1 -> */
-create trigger potencial BEFORE insert on usuaris
+
+create trigger potencial AFTER insert on usuaris
 begin
-    INSERT INTO amicsPotencial SELECT new.ID,ID,grau from usuaris where grau=new.grau;
+INSERT INTO amicsPotencial SELECT new.ID,ID,grau from usuaris where grau=new.grau;
 END;
+
+
+create trigger graUsuaris AFTER insert on usuaris
+when new.grau < 9 or new.grau > 12
+begin
+	UPDATE usuaris set grau = NULL where ID=new.ID;
+end;
+
+create trigger graUsuaris1 AFTER insert on usuaris
+when new.grau is NULL
+begin
+	UPDATE usuaris set grau=9 where ID=new.ID;
+end;
+
+
+create trigger relacio_simetrica1 BEFORE delete on amistats
+begin
+delete from amistats where (ID1=old.ID2 and old.ID2 and ID2 = old.ID1 );
+end;
+
+create trigger relacio_simetrica AFTER insert on amistats
+begin
+	INSERT into amistats values (new.ID2,new.ID1);
+end;
+
+create trigger elimina_graduats after update of grau on usuaris for each row  when (new.grau >= 12)
+begin
+	delete from preferencies where (ID1 in (SELECT ID FROM usuaris where grau>=12))or (ID2 in (select ID from usuaris where grau >= 12)); 
+	delete from amistats where (ID1 in (select ID from usuaris where grau >= 12)) or (ID2 in (select ID from usuaris where grau >= 12));       
+      	delete from usuaris where grau >= 12;
+end;	
+
+create trigger incrementa after update on usuaris
+begin
+	delete from  usuaris where ID=new.ID;
+end;
+create trigger increment_amics after update on usuaris
+begin
+	update usuaris set grau=new.grau where grau=new.grau -1 and  ID in (select ID2 from amistats where ID1=new.ID); 
+end;
