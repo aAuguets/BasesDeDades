@@ -113,14 +113,14 @@ create trigger relacio_simetrica AFTER insert on amistats
 begin
 	INSERT into amistats values (new.ID2,new.ID1);
 end;
-/*
+
 create trigger elimina_graduats after update of grau on usuaris for each row  when (new.grau >= 12)
 begin
 	delete from preferencies where (ID1 in (SELECT ID FROM usuaris where grau>=12))or (ID2 in (select ID from usuaris where grau >= 12));
 	delete from amistats where (ID1 in (select ID from usuaris where grau >= 12)) or (ID2 in (select ID from usuaris where grau >= 12));
       	delete from usuaris where grau >= 12;
 end;
-
+/*
 create trigger incrementa after update on usuaris
 begin
 	delete from  usuaris where ID=new.ID;
