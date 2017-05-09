@@ -114,11 +114,16 @@ begin
 	INSERT into amistats values (new.ID2,new.ID1);
 end;
 
-create trigger elimina_graduats after update of grau on usuaris for each row  when (new.grau >= 12)
+/*Tasca4*/
+
+create trigger elimina_graduats after update of grau on usuaris for each row
+when (new.grau >= 12)
 begin
-	delete from preferencies where (ID1 in (SELECT ID FROM usuaris where grau>=12))or (ID2 in (select ID from usuaris where grau >= 12));
-	delete from amistats where (ID1 in (select ID from usuaris where grau >= 12)) or (ID2 in (select ID from usuaris where grau >= 12));
-      	delete from usuaris where grau >= 12;
+	delete from preferencies where (ID1 in (SELECT ID FROM usuaris where ID = new.id))or
+                                 (ID2 in (select ID from usuaris where ID = new.id));
+	delete from amistats where (ID1 in (select ID from usuaris where ID = new.id)) or
+                             (ID2 in (select ID from usuaris where ID = new.id));
+      	delete from usuaris where ID = new.id;
 end;
 /*
 create trigger incrementa after update on usuaris
