@@ -78,13 +78,13 @@ insert into preferencies values(1501, 1934);
 insert into preferencies values(1934, 1501);
 insert into preferencies values(1025, 1101);
 
-
+/*Tasca 1*/
 create trigger potencial AFTER insert on usuaris
 begin
 INSERT INTO amicsPotencial SELECT new.ID,ID,grau from usuaris where grau=new.grau;
 END;
 
-
+/*Tasca 2*/
 create trigger graUsuaris AFTER insert on usuaris
 when new.grau < 9 or new.grau > 12
 begin
@@ -96,24 +96,30 @@ when new.grau is NULL
 begin
 	UPDATE usuaris set grau=9 where ID=new.ID;
 end;
-
-
-create trigger relacio_simetrica1 BEFORE delete on amistats
-begin
-delete from amistats where (ID1=old.ID2 and old.ID2 and ID2 = old.ID1 );
-end;
+/*tasca 3*/
+/*Te un petit error, no creus? a la linia 104.
+ *
+ * create trigger relacio_simetrica1 BEFORE delete on amistats
+ * begin
+ * delete from amistats where (ID1=old.ID2 and old.ID2 and ID2 = old.ID1 );
+ * end;
+ */
+create trigger selacio_simetrica1 BEFORE delete on amistats
+  begin
+    delete from amistats where (ID1=old.ID2 and ID2 = old.ID1);
+  end;
 
 create trigger relacio_simetrica AFTER insert on amistats
 begin
 	INSERT into amistats values (new.ID2,new.ID1);
 end;
-
+/*
 create trigger elimina_graduats after update of grau on usuaris for each row  when (new.grau >= 12)
 begin
-	delete from preferencies where (ID1 in (SELECT ID FROM usuaris where grau>=12))or (ID2 in (select ID from usuaris where grau >= 12)); 
-	delete from amistats where (ID1 in (select ID from usuaris where grau >= 12)) or (ID2 in (select ID from usuaris where grau >= 12));       
+	delete from preferencies where (ID1 in (SELECT ID FROM usuaris where grau>=12))or (ID2 in (select ID from usuaris where grau >= 12));
+	delete from amistats where (ID1 in (select ID from usuaris where grau >= 12)) or (ID2 in (select ID from usuaris where grau >= 12));
       	delete from usuaris where grau >= 12;
-end;	
+end;
 
 create trigger incrementa after update on usuaris
 begin
@@ -121,5 +127,6 @@ begin
 end;
 create trigger increment_amics after update on usuaris
 begin
-	update usuaris set grau=new.grau where grau=new.grau -1 and  ID in (select ID2 from amistats where ID1=new.ID); 
+	update usuaris set grau=new.grau where grau=new.grau -1 and  ID in (select ID2 from amistats where ID1=new.ID);
 end;
+*/
