@@ -1,6 +1,11 @@
 from Tkinter import *
+from db import *
 import ttk
 win = Tk()
+
+def mostra_tree():
+    info_contactes = contactes_bd()
+    for i in len(info_contactes):
 
 def Finestra_gestor():
     win.title('Gestor de Contactes')
@@ -47,9 +52,12 @@ def Finestra_gestor():
     f4 = Frame(win)
     f4.pack(fill = BOTH)
     label4_b1 = Button(f4,text = 'Eliminar seleccionat').grid(row = 1,column = 1)
-    label4_b2 = Button(f4,text = 'Modificar seleccionat').grid(row = 1,column = 3)
-    label4_b3 = Button(f4,text = 'Sortir').grid(row = 1, column=5)
-
+    label4_b2 = Button(f4,text = 'Modificar seleccionat').grid(row = 1,column = 2)
+    label4_b3 = Button(f4,text = 'Sortir').grid(row = 1, column=3)
+    label4_b4 = Button(f4,text = 'Funcio_extradeede').grid(row = 1, column=4)
+    win.resizable(width=False, height=False)
     win.mainloop()
 
-Finestra_gestor()
+if(crear_bd()):
+    contactes_bd()
+    Finestra_gestor()
