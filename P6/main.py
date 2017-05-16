@@ -34,6 +34,39 @@ def elimina_contacte():
     else:
         Message(f1, text='Error. No eliminat', width=200, fg='red').grid(row=1, column=1)
 
+def modifica_contacte():
+    dadestree = tree.focus()
+    mail = tree.item(dadestree)['values'][2]
+    telf = tree.item(dadestree)['values'][1]
+    nom = tree.item(dadestree)['values'][0]
+    #Frame finestra emergent
+    top = Toplevel()
+    top.title('Modifica contacte')
+
+    fe = Frame(top)
+    fe.pack(side=RIGHT)
+
+    Label(fe, text="Nom: ").grid(row=0)
+    n=Entry(fe)
+    n.insert(0,nom)
+    n.config(state=DISABLED)
+    n.grid(row=0, column=1, padx=5, pady=5, sticky=W)
+
+    Label(fe, text="Telf vell: ").grid(row=1)
+    t0=Entry(fe)
+    t0.insert(0,telf)
+    t0.config(state=DISABLED)
+    t0.grid(row=1, column=1, padx=5, pady=5)
+
+    Label(fe, text="Telf nou: ").grid(row=2)
+    t=Entry(fe)
+    t.insert(0,telf)
+    t.config(state=ABLE)
+    t.grid(row=2, column=1, padx=5, pady=5)
+
+
+
+
 
 root = Tk()
 crear_bd()
@@ -89,7 +122,7 @@ ff = Frame(root)
 ff.pack(side=BOTTOM)
 
 Button(ff, text="Elimina selecionat", command = elimina_contacte).grid(row=1, column=0)
-Button(ff, text="Modifica selecionat").grid(row=1, column=1)
+Button(ff, text="Modifica selecionat", command = modifica_contacte).grid(row=1, column=1)
 Button(ff, text="EXTRA UNKNOWN").grid(row=1, column=2)
 Button(ff, text="Sortir",  command= exit).grid(row=1, column=3)
 root.resizable(width=False, height=False)
