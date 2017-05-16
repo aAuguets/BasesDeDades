@@ -4,6 +4,10 @@ import ttk
 
 
 def mostra_tree():
+    contingut = tree.get_children()
+    for i in contingut:
+        tree.delete(i)
+
     info_contactes = contactes_bd()
     #print info_contactes
     for i in range(len(info_contactes)):
@@ -15,9 +19,20 @@ def insereix_contacte():
     t = telf.get()
     m = mail.get()
     #print n, t, m
-    afegeix_usuari(n, t, m)
-    
-    Message(f1, text='Contacte afegit', width=200, fg='green').grid(row=1, column=1)
+    if(afegeix_usuari(n, t, m)):
+        mostra_tree()
+        Message(f1, text='Contacte afegit', width=200, fg='green').grid(row=1, column=1)
+    else:
+        Message(f1, text='Error. Mail repetit', width=200, fg='red').grid(row=1, column=1)
+
+def elimina_contacte():
+    dadestree = tree.focus()
+    mail = tree.item(dadestree)['values'][2]
+    if(del_contacte(mail)):
+        mostra_tree()
+        Message(f1, text='Contacte Eliminat', width=200, fg='green').grid(row=1, column=1)
+    else:
+        Message(f1, text='Error. No eliminat', width=200, fg='red').grid(row=1, column=1)
 
 
 root = Tk()
@@ -51,7 +66,7 @@ Entry(fc, textvariable=mail).grid(row=2, column=1)
 
 Button(fc, text="Afegeix Contacte", command = insereix_contacte).grid(row=3, column=1)
 
-Button(f1, text="Mostra Contactes").grid(row=1, column=0)
+Button(f1, text="Mostra Contacte", command = mostra_tree).grid(row=1, column=0)
 
 # FRAME 2
 f2 = Frame(root)
@@ -73,7 +88,7 @@ tree.pack()
 ff = Frame(root)
 ff.pack(side=BOTTOM)
 
-Button(ff, text="Elimina selecionat").grid(row=1, column=0)
+Button(ff, text="Elimina selecionat", command = elimina_contacte).grid(row=1, column=0)
 Button(ff, text="Modifica selecionat").grid(row=1, column=1)
 Button(ff, text="EXTRA UNKNOWN").grid(row=1, column=2)
 Button(ff, text="Sortir",  command= exit).grid(row=1, column=3)

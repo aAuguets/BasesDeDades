@@ -47,3 +47,15 @@ def afegeix_usuari(nom, telf, mail):
     except:
         print "Error al afegir usuaris."
         return False
+
+def del_contacte(mail):
+    try:
+        con=lite.connect('gest_cont.db')
+        cur=con.cursor()
+        cur.execute("DELETE FROM CONTACTES where mail=?;",(mail,))
+        con.commit()
+        con.close
+        return True
+    except:
+        print "Error al Eliminar."
+        return False
