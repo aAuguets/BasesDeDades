@@ -1,6 +1,5 @@
 import sqlite3 as lite
 
-
 def crear_bd():
     """
     Crear la nostra base de dades
@@ -34,5 +33,17 @@ def contactes_bd():
     cur=con.cursor()
     cur.execute('select * from contactes')
     rows=cur.fetchall()
-    print rows
+    con.close()
     return rows
+
+def afegeix_usuari(nom, telf, mail):
+    try:
+        con=lite.connect('gest_cont.db')
+        cur=con.cursor()
+        cur.execute("INSERT into CONTACTES values(?, ?, ?);",(nom,telf,mail,))
+        con.commit()
+        con.close
+        return True
+    except:
+        print "Error al afegir usuaris."
+        return False
