@@ -1,11 +1,13 @@
 from Tkinter import *
-from db import *
+from bd import *
 import ttk
 win = Tk()
 
-def mostra_tree():
+def mostra_tree(tree):
     info_contactes = contactes_bd()
-    for i in len(info_contactes):
+    for i in range(len(info_contactes)):
+        tree.insert('','end',text=''.format(info_contactes[i][0]), values=(info_contactes[i][0],info_contactes[i][1]))
+    return 0
 
 def Finestra_gestor():
     win.title('Gestor de Contactes')
@@ -40,12 +42,14 @@ def Finestra_gestor():
     f3 = Frame(win)
     f3.pack(fill = BOTH)
     tree = ttk.Treeview(f3)
-    tree["columns"]=("one","two")
+    tree["columns"]=("one","two","three")
     tree["show"] = 'headings'
-    tree.column("one", width=200)
-    tree.column("two", width=200)
+    tree.column("one", width=150)
+    tree.column("two", width=100)
+    tree.column("three", width=200)
     tree.heading("one", text="Nom")
     tree.heading("two", text="Telefon")
+    tree.heading("three", text="email")
     tree.pack()
 
     #Botonera footer
@@ -53,10 +57,12 @@ def Finestra_gestor():
     f4.pack(fill = BOTH)
     label4_b1 = Button(f4,text = 'Eliminar seleccionat').grid(row = 1,column = 1)
     label4_b2 = Button(f4,text = 'Modificar seleccionat').grid(row = 1,column = 2)
-    label4_b3 = Button(f4,text = 'Sortir').grid(row = 1, column=3)
-    label4_b4 = Button(f4,text = 'Funcio_extradeede').grid(row = 1, column=4)
+    label4_b3 = Button(f4,text = 'Sortir', command = quit).grid(row = 1, column=4)
+    label4_b4 = Button(f4,text = 'Funcio_extradeede').grid(row = 1, column=3)
     win.resizable(width=False, height=False)
+    mostra_tree(tree)
     win.mainloop()
+
 
 if(crear_bd()):
     contactes_bd()
