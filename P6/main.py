@@ -1,6 +1,7 @@
 from Tkinter import *
 from bd import *
 import ttk
+import tkMessageBox as tkmb
 
 
 def mostra_tree():
@@ -34,9 +35,20 @@ def elimina_contacte():
     else:
         Message(f1, text='Error. No eliminat', width=200, fg='red').grid(row=1, column=1)
 
+def actualitza_dades():
+    global mailm, telfn, top
+    te= telfn.get()
+    if(actualitza(mailm, te)):
+        mostra_tree()
+        Message(f1, text='Contacte Actualitzat', width=200, fg='green').grid(row=1, column=1)
+    else:
+        Message(f1, text='Error. No Actualitzat', width=200, fg='red').grid(row=1, column=1)
+    top.destroy()
+
 def modifica_contacte():
+    global mailm, telfn, top
     dadestree = tree.focus()
-    mail = tree.item(dadestree)['values'][2]
+    mailm = tree.item(dadestree)['values'][2]
     telf = tree.item(dadestree)['values'][1]
     nom = tree.item(dadestree)['values'][0]
     #Frame finestra emergent
@@ -59,13 +71,16 @@ def modifica_contacte():
     t0.grid(row=1, column=1, padx=5, pady=5)
 
     Label(fe, text="Telf nou: ").grid(row=2)
-    t=Entry(fe)
-    t.insert(0,telf)
-    t.config(state=ABLE)
-    t.grid(row=2, column=1, padx=5, pady=5)
+    telfn = StringVar()
+    Entry(fe, textvariable=telfn).grid(row=2, column=1)
+
+    Button(fe, text="Actualitza dades", command = actualitza_dades).grid(row=3, column=1)
 
 
-
+def sortida():
+        global E
+        if tkmb.askokcancel("Exit", "vols sortir?"):
+		root.destroy()
 
 
 root = Tk()
@@ -124,7 +139,7 @@ ff.pack(side=BOTTOM)
 Button(ff, text="Elimina selecionat", command = elimina_contacte).grid(row=1, column=0)
 Button(ff, text="Modifica selecionat", command = modifica_contacte).grid(row=1, column=1)
 Button(ff, text="EXTRA UNKNOWN").grid(row=1, column=2)
-Button(ff, text="Sortir",  command= exit).grid(row=1, column=3)
+Button(ff, text="Sortir",  command= sortida).grid(row=1, column=3)
 root.resizable(width=False, height=False)
 
 

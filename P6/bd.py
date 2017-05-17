@@ -59,3 +59,15 @@ def del_contacte(mail):
     except:
         print "Error al Eliminar."
         return False
+
+def actualitza(mail, tel):
+    try:
+        con=lite.connect('gest_cont.db')
+        cur=con.cursor()
+        cur.execute("UPDATE CONTACTES SET telefon =? where mail=?;",(tel,mail,))
+        con.commit()
+        con.close
+        return True
+    except:
+        print "Error al Actualitzar."
+        return False
