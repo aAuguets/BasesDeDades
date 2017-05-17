@@ -2,6 +2,9 @@ from Tkinter import *
 from bd import *
 import ttk
 import tkMessageBox as tkmb
+import tkFileDialog
+from PIL import Image
+from PIL import ImageTk
 
 
 def mostra_tree():
@@ -78,11 +81,61 @@ def modifica_contacte():
 
 
 def sortida():
-        global E
-        if tkmb.askokcancel("Exit", "vols sortir?"):
-		root.destroy()
+    global E
+    if tkmb.askokcancel("Exit", "vols sortir?"):
+        root.destroy()
+def afegir_image():
+    global img
+    img_profile=tkFileDialog.askopenfilename()
+    with open(img_profile,"rb") as i:
+        img=i.read()
+    imatge=lite.binary(img)
 
 
+def mostra_contacte():
+    """
+    creamos un nevo Frame
+    """
+    global mailm, telfn, top, img
+    dadestree = tree.focus()
+    mailm = tree.item(dadestree)['values'][2]
+    telf = tree.item(dadestree)['values'][1]
+    nom = tree.item(dadestree)['values'][0]
+    #ventana=Tk()
+    ventana= Toplevel()
+    ventana.title("Info Contacte")
+    path= "dipse.gif"
+    myframe4=Frame(ventana)
+    info=LabelFrame(ventana,text="info_contactes",padx=10,pady=10)
+    info.grid(row=0,column=1)
+
+    Label(info, text="Nom: ").grid(row=0)
+    n=Entry(info)
+    n.insert(0,nom)
+    n.config(state=DISABLED)
+    n.grid(row=0, column=1, padx=5, pady=5, sticky=W)
+
+    Label(info, text="Telf: ").grid(row=1)
+    t0=Entry(info)
+    t0.insert(0,telf)
+    t0.config(state=DISABLED)
+    t0.grid(row=1, column=1, padx=5, pady=5)
+
+    Label(info, text="Mail: ").grid(row=2)
+    t1=Entry(info)
+    t1.insert(0,mailm)
+    t1.config(state=DISABLED)
+    t1.grid(row=2, column=1, padx=5, pady=5)
+    Button(ventana, text="Afegeix imatge", command = afegir_image).grid(row=3, column=1)
+    """
+    contacte=Tk()
+    contacte.title("Info del contacte")
+    myframe4=Frame(contacte)
+    myframe4.pack()
+    photo_contacte = PhotoImage(file ='dipse.gif')
+    label4=Label(myframe4, image = photo_contacte)
+    label4.grid(row=0, column=0)
+    """
 root = Tk()
 crear_bd()
 
@@ -114,7 +167,7 @@ Entry(fc, textvariable=mail).grid(row=2, column=1)
 
 Button(fc, text="Afegeix Contacte", command = insereix_contacte).grid(row=3, column=1)
 
-Button(f1, text="Mostra Contacte", command = mostra_tree).grid(row=1, column=0)
+Button(f1, text="Mostra Contacte", command = mostra_contacte).grid(row=1, column=0)
 
 # FRAME 2
 f2 = Frame(root)
