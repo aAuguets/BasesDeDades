@@ -48,19 +48,17 @@ def actualitza_dades():
     te= telf_n.get()
     nomn=nom_n.get()
     n_cog=cog_n.get()
+    print n_cog
     if (cambio==True):
         cambio=False
     #img_n tiene que ser el filename de la nueva imagen
         if(actualitza(mailm,n_cog, te , 'perfil1.jpg', nomn)):
-            print "si que hemos cambiado imagen, actualiza bien"
             mostra_tree()
             Message(f1, text='Contacte Actualitzat', width=200, fg='green').grid(row=1, column=1)
         else:
             Message(f1, text='Error. No Actualitzat', width=200, fg='red').grid(row=1, column=1)
     else:
-        print ""
         if(actualitza(mailm,n_cog,te,'', nomn)):
-            print " No hemos cambiado la imagen, actualiza bien"
             mostra_tree()
             Message(f1, text='Contacte Actualitzat', width=200, fg='green').grid(row=1, column=1)
         else:
@@ -70,7 +68,7 @@ def actualitza_dades():
 
 def modifica_contacte():
 
-    global mailm, telf_n, ventana, nom_n, cog
+    global mailm, telf_n, ventana, nom_n, cog, cog_n
     dadestree = tree.focus()
     cognom=tree.item(dadestree)['values'][1]
     mailm = tree.item(dadestree)['values'][3]
@@ -273,7 +271,7 @@ ff.pack(side=BOTTOM)
 
 Button(ff, text="Elimina selecionat", command = elimina_contacte).grid(row=1, column=0)
 Button(ff, text="Modifica selecionat", command = modifica_contacte).grid(row=1, column=1)
-Button(ff, text="EXTRA UNKNOWN",command = funcion_extra).grid(row=1, column=2)
+Button(ff, text="MOSTRA taula dept",command = funcion_extra).grid(row=1, column=2)
 Button(ff, text="Sortir",  command= sortida).grid(row=1, column=3)
 root.resizable(width=False, height=False)
 
